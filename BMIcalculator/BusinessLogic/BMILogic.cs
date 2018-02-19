@@ -3,22 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using BMIcalculator.Models;
+using BMIcalculator.BusinessLogic;
+using System.Web.Mvc;
 
 namespace BMIcalculator.BusinessLogic
 {
     public class BMILogic
     {
-        public BMI CountBMI(BMI modelBmi)
+        public string ServeModel(BMI model)
         {
-            modelBmi.Score = modelBmi.Weight*10000 /modelBmi.Height / modelBmi.Height;
-            return modelBmi;
+            CountBMI(model);
+          return  CheckBMI(model);
         }
 
-        public string CheckBMI(BMI modelBmi)
+
+        private BMI CountBMI(BMI modelBmi)
         {
-            return modelBmi.Score < 18.5
-                ? "~/Views/BMI/BMItoLow.cshtml"
-                : (modelBmi.Score < 25 ? "~/Views/BMI/BMIok.cshtml" : "~/Views/BMI/BMItoHigh.cshtml");
+            modelBmi.YourBMI = modelBmi.Enumerator == CreateEnumerator.KilogramsAndCentimeters
+                ? modelBmi.Weight * 10000 / modelBmi.Height / modelBmi.Height
+                : modelBmi.Weight * 703 / modelBmi.Height / modelBmi.Height;
+           return modelBmi;
+        }
+
+        private string CheckBMI(BMI modelBmi)
+        {
+            if (CheckHour())
+            {
+                return modelBmi.YourBMI < 18.5
+                    ? "~/Views/BMI/BMItoLow.cshtml"
+                    : (modelBmi.YourBMI < 25 ? "~/Views/BMI/BMIok.cshtml" : "~/Views/BMI/BMItoHigh.cshtml");
+            }
+
+            return "~/Views/BMI/BMItoLate.cshtml";
+        }
+
+        private bool CheckHour()
+        {
+            return DateTime.Now.Hour < 22 && DateTime.Now.Hour >= 6;
         }
     }
 }

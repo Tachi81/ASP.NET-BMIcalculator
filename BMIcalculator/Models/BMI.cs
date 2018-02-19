@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.UI.WebControls.WebParts;
+using BMIcalculator.BusinessLogic;
 
 namespace BMIcalculator.Models
 {
@@ -9,6 +12,7 @@ namespace BMIcalculator.Models
     {
         public int Height { get; set; }
         public float Weight { get; set; }
-        public float Score { get; set; }
+        public float YourBMI { get; set; }
+        public CreateEnumerator Enumerator { get; set; }
     }
 }

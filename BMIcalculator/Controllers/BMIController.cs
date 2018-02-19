@@ -15,6 +15,7 @@ namespace BMIcalculator.Controllers
         public BMIController()
         {
             _bmiLogic = new BMILogic();
+
         }
 
         // GET: BMI
@@ -32,6 +33,7 @@ namespace BMIcalculator.Controllers
         // GET: BMI/Create
         public ActionResult Create()
         {
+
             return View();
         }
 
@@ -39,19 +41,21 @@ namespace BMIcalculator.Controllers
         [HttpPost]
         public ActionResult Create(BMI model)
         {
-            try
+            var validatorKg = new BmiValidatorKg();
+            var validatorPounds = new BmiValidatorPounds();
+            var result = (model.Enumerator == CreateEnumerator.KilogramsAndCentimeters) ? validatorKg.Validate(model) : validatorPounds.Validate(model);
+
+            if (result.IsValid)
             {
-                _bmiLogic.CountBMI(model);
-
-
-                return View(_bmiLogic.CheckBMI(model), model);
+                return View(_bmiLogic.ServeModel(model), model);
             }
-            catch (Exception e)
+            ModelState.Clear();
+            foreach (var error in result.Errors)
             {
-                Console.WriteLine(e);
-                throw;
+                ModelState.AddModelError("", error.ErrorMessage);
             }
             return View(model);
+
         }
 
         // GET: BMI/Edit/5
